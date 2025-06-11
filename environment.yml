@@ -1,0 +1,13 @@
+name: crop-monitor
+channels:
+  - conda-forge
+dependencies:
+  - bottleneck
+  - dask
+  - distributed
+  - ipykernel
+  - matplotlib
+  - numpy
+  - odc-stac
+  - pystac-client
+  - python=3.11
