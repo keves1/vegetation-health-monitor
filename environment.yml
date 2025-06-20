@@ -5,9 +5,16 @@ dependencies:
   - bottleneck
   - dask
   - distributed
+  - folium
   - ipykernel
+  - ipyleaflet
+  - leafmap
   - matplotlib
   - numpy
   - odc-stac
+  - pip
+  - planetary-computer
   - pystac-client
   - python=3.11
+  - pip:
+      - git+https://github.com/keves1/torchgeo.git@add-autoregression-task

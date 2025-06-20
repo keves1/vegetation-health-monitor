@@ -1,2 +1,4 @@
 /tmp
 /data
+__pycache__/
+*.geojson
