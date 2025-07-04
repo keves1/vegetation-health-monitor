@@ -1,0 +1,35 @@
+[project]
+name = "vhm-pipelines"
+version = "0.0.0"
+requires-python = ">=3.11"
+
+dependencies = [
+  "bottleneck",
+  "dask",
+  "distributed",
+  "numpy",
+  "odc-stac",
+  "planetary-computer",
+  "pystac-client",
+  "torchgeo @ git+https://github.com/keves1/torchgeo.git@add-autoregression-task",
+  "zarr",
+]
+
+[project.optional-dependencies]
+dev = [
+"folium",
+  "ipykernel",
+  "ipyleaflet",
+  "leafmap",
+  "matplotlib",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+fix = true
+
+[tool.ruff.lint]
+extend-select = ["I", "RUF"]

@@ -2,8 +2,8 @@ import os
 from typing import Any
 
 import torch
-from torch.utils.data import Dataset
 import xarray as xr
+from torch.utils.data import Dataset
 
 
 class NDVIDataset(Dataset):
@@ -73,7 +73,7 @@ class NDVIDataset(Dataset):
         if os.path.exists(pathname):
             data = xr.open_zarr(pathname)
             ndvi = data.ndvi
-            ndvi = ndvi.isel(x=slice(0,50), y=slice(0,50))
+            ndvi = ndvi.isel(x=slice(0, 50), y=slice(0, 50))
             return ndvi.compute()
         else:
             raise FileNotFoundError
