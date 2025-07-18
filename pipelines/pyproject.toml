@@ -11,13 +11,16 @@ dependencies = [
   "odc-stac",
   "planetary-computer",
   "pystac-client",
+  "python-dotenv",
+  "s3fs",
   "torchgeo @ git+https://github.com/keves1/torchgeo.git@add-autoregression-task",
   "zarr",
 ]
 
 [project.optional-dependencies]
 dev = [
-"folium",
+  "bokeh",
+  "folium",
   "ipykernel",
   "ipyleaflet",
   "leafmap",
