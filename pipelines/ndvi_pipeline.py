@@ -3,25 +3,35 @@ import os
 from datetime import date, datetime, time
 
 import pystac_client
+import s3fs
+from dotenv import load_dotenv
 from odc.stac import load
 from planetary_computer import sign_url
 from shapely.geometry import shape
 
+load_dotenv()
+BUCKET_NAME = os.environ["S3_BUCKET"]
+AOI_PATH = f"{BUCKET_NAME}/aoi.geojson"
+END_DATE_PATH = f"{BUCKET_NAME}/last_end_date.txt"
+ZARR_PATH = f"{BUCKET_NAME}/ndvi_processed.zarr"
+
 # dask_client = DaskClient()
 
-if os.path.exists("aoi.geojson"):
-    with open("aoi.geojson", "r") as file:
+fs = s3fs.S3FileSystem()
+
+if fs.exists(AOI_PATH):
+    with fs.open(AOI_PATH, "r") as file:
         area_of_interest = json.load(file)["features"][0]["geometry"]
         geom = shape(area_of_interest)
         bbox = tuple(geom.bounds)
 else:
-    raise FileNotFoundError("aoi.geojson was not found.")
+    raise FileNotFoundError(f"{AOI_PATH} was not found.")
 
-if os.path.exists("last_end_date.txt"):
-    with open("last_end_date.txt", "r") as file:
+if fs.exists(END_DATE_PATH):
+    with fs.open(END_DATE_PATH, "r") as file:
         start_date = file.readline().strip()
 else:
-    raise FileNotFoundError("last_end_date.txt was not found.")
+    raise FileNotFoundError(f"{END_DATE_PATH} was not found.")
 
 catalog = pystac_client.Client.open(
     "https://planetarycomputer.microsoft.com/api/stac/v1/"
@@ -29,9 +39,6 @@ catalog = pystac_client.Client.open(
 collection = "modis-09Q1-061"
 bbox = bbox
 end_date = datetime.combine(date.today(), time()).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-with open("last_end_date.txt", "w") as file:
-    file.write(end_date)
 
 search = catalog.search(
     collections=[collection],
@@ -53,6 +60,8 @@ else:
         )
     )
     print(f"STAC search found {len(items)} items for dates {unique_dates}.")
+    with fs.open(END_DATE_PATH, "w") as file:
+        file.write(end_date)
 
 data = load(
     items,
@@ -72,8 +81,11 @@ data["ndvi"] = ndvi.clip(-1, 1)
 data = data.drop_vars(["red", "nir08", "sur_refl_qc_250m"])
 data = data.compute()
 
-zarr_store_path = "data/ndvi_processed.zarr"
-if os.path.exists(zarr_store_path):
-    data.to_zarr(zarr_store_path, mode="a", append_dim="time")
+if fs.exists(f"{ZARR_PATH}/zarr.json"):
+    store = s3fs.S3Map(root=ZARR_PATH, s3=fs, check=False)
+    data.to_zarr(store, mode="a", append_dim="time")
+    print("New data added to zarr store.")
 else:
-    raise FileNotFoundError(f"{zarr_store_path} was not found.")
+    raise FileNotFoundError(f"{ZARR_PATH} was not found.")
+
+fs.close()
