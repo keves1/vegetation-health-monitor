@@ -18,4 +18,4 @@ RUN uv sync --frozen --no-cache
 # Copy the application into the container.
 COPY ndvi_pipeline.py ./
 
-CMD ["python", "ndvi_pipeline.py"]
+CMD ["uv", "run", "python", "ndvi_pipeline.py"]
