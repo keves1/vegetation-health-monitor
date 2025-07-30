@@ -87,5 +87,3 @@ if fs.exists(f"{ZARR_PATH}/zarr.json"):
     print("New data added to zarr store.")
 else:
     raise FileNotFoundError(f"{ZARR_PATH} was not found.")
-
-fs.close()
