@@ -213,3 +213,5 @@ data/
 *.geojson
 lightning_logs/
 wandb-logs/
+*.pt
+temp/

@@ -25,7 +25,7 @@ class NDVIDataModule(LightningDataModule):
         self.kwargs = kwargs
 
     def setup(self, stage):
-        dataset = NDVIDataset(**self.kwargs)
+        dataset = NDVIDataset(root=self.data_dir, **self.kwargs)
         train_split_pct = 1 - (self.val_split_pct + self.test_split_pct)
         train_size = int(train_split_pct * len(dataset))
         val_size = int(self.val_split_pct * len(dataset))

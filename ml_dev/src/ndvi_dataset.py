@@ -72,8 +72,7 @@ class NDVIDataset(Dataset):
         pathname = os.path.join(self.root, self.data_file_name)
         if os.path.exists(pathname):
             data = xr.open_zarr(pathname)
-            ndvi = data.ndvi
-            ndvi = ndvi.isel(x=slice(0, 50), y=slice(0, 50))
+            ndvi = data["ndvi_8d_processed"].isel(x=slice(0, 50), y=slice(0, 50))
             return ndvi.compute()
         else:
             raise FileNotFoundError

@@ -1,5 +1,5 @@
 [project]
-name = "vhm-ml"
+name = "vhm-ml-dev"
 version = "0.0.0"
 requires-python = ">=3.11"
 
@@ -7,7 +7,7 @@ dependencies = [
   "ipykernel",
   "matplotlib",
   "numpy",
-  "torchgeo @ git+https://github.com/keves1/torchgeo.git@add-autoregression-task",
+  "torchgeo @ git+https://github.com/keves1/torchgeo.git@93039caa63009420edf1a0bc6d1dd75cfbfd95b5",
   "wandb",
   "xarray",
   "zarr",
