@@ -13,7 +13,6 @@ dependencies = [
   "pystac-client",
   "python-dotenv",
   "s3fs",
-  "torchgeo @ git+https://github.com/keves1/torchgeo.git@add-autoregression-task",
   "zarr",
 ]
 
