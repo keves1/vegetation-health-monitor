@@ -7,7 +7,7 @@ dependencies = [
   "ipykernel",
   "matplotlib",
   "numpy",
-  "torchgeo @ git+https://github.com/keves1/torchgeo.git@93039caa63009420edf1a0bc6d1dd75cfbfd95b5",
+  "torchgeo @ git+https://github.com/keves1/torchgeo.git@d9353ad97b77a7724887bc73c18f9699a4106799",
   "wandb",
   "xarray",
   "zarr",

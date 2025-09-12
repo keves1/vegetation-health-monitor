@@ -2610,7 +2610,7 @@ wheels = [
 [[package]]
 name = "torchgeo"
 version = "0.7.0"
-source = { git = "https://github.com/keves1/torchgeo.git?rev=93039caa63009420edf1a0bc6d1dd75cfbfd95b5#93039caa63009420edf1a0bc6d1dd75cfbfd95b5" }
+source = { git = "https://github.com/keves1/torchgeo.git?rev=d9353ad97b77a7724887bc73c18f9699a4106799#d9353ad97b77a7724887bc73c18f9699a4106799" }
 dependencies = [
     { name = "einops" },
     { name = "fiona" },
@@ -2801,7 +2801,7 @@ requires-dist = [
     { name = "ipykernel" },
     { name = "matplotlib" },
     { name = "numpy" },
-    { name = "torchgeo", git = "https://github.com/keves1/torchgeo.git?rev=93039caa63009420edf1a0bc6d1dd75cfbfd95b5" },
+    { name = "torchgeo", git = "https://github.com/keves1/torchgeo.git?rev=d9353ad97b77a7724887bc73c18f9699a4106799" },
     { name = "wandb" },
     { name = "xarray" },
     { name = "zarr" },

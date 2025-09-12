@@ -62,8 +62,8 @@ class NDVIDataset(Dataset):
         future_steps_normalized = (future_steps_tensor - mean) / (std + 1e-12)
 
         return {
-            "past": past_steps_normalized,
-            "future": future_steps_normalized,
+            "past_targets": past_steps_normalized,
+            "future_targets": future_steps_normalized,
             "mean": mean,
             "std": std,
         }
