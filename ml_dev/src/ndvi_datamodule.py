@@ -3,7 +3,7 @@ from typing import Any
 from lightning.pytorch import LightningDataModule
 from torch.utils.data import DataLoader, Subset
 
-from ndvi_dataset import NDVIDataset
+from .ndvi_dataset import NDVIDataset
 
 
 class NDVIDataModule(LightningDataModule):
