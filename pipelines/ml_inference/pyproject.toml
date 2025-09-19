@@ -1,0 +1,43 @@
+[project]
+name = "vhm-ml-inference"
+version = "0.0.0"
+requires-python = ">=3.11"
+
+dependencies = [
+  "boto3",
+  "dask",
+  "distributed",
+  "numpy",
+  "python-dotenv",
+  "s3fs",
+  "torch",
+  "xarray",
+  "zarr",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ipykernel",
+  "matplotlib",
+  "bokeh",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+fix = true
+
+[tool.ruff.lint]
+extend-select = ["I", "RUF"]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu" },
+]
