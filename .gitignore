@@ -215,3 +215,4 @@ lightning_logs/
 wandb-logs/
 *.pt
 temp/
+*.ckpt
