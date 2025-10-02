@@ -88,7 +88,7 @@ forecast_da = xr.apply_ufunc(
     dask="parallelized",
 )
 forecast_da = forecast_da.rename("ndvi_8d_forecast")
-forecast_da = forecast_da.rename({"forecast_time": "time"})
+forecast_da = forecast_da.rename({"forecast_time": "time"}).transpose("time", "y", "x")
 last_date = ndvi.time.values[-1]
 forecast_dates = pd.date_range(
     start=last_date, periods=NUM_FUTURE_STEPS + 1, freq="8D"
