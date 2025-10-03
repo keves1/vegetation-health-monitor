@@ -1,0 +1,29 @@
+[project]
+name = "vhm-ui"
+version = "0.0.0"
+requires-python = ">=3.11"
+
+dependencies = [
+  "boto3",
+  "leafmap",
+  "python-dotenv",
+  "rasterio",
+  "rioxarray",
+  "streamlit",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ipykernel",
+  "matplotlib",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+fix = true
+
+[tool.ruff.lint]
+extend-select = ["I", "RUF"]
