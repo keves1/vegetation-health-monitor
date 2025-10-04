@@ -6,6 +6,7 @@ requires-python = ">=3.11"
 dependencies = [
   "boto3",
   "leafmap",
+  "matplotlib",
   "python-dotenv",
   "rasterio",
   "rioxarray",
@@ -15,7 +16,6 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "ipykernel",
-  "matplotlib",
 ]
 
 [build-system]

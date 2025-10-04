@@ -2406,6 +2406,7 @@ source = { editable = "." }
 dependencies = [
     { name = "boto3" },
     { name = "leafmap" },
+    { name = "matplotlib" },
     { name = "python-dotenv" },
     { name = "rasterio" },
     { name = "rioxarray" },
@@ -2415,7 +2416,6 @@ dependencies = [
 [package.optional-dependencies]
 dev = [
     { name = "ipykernel" },
-    { name = "matplotlib" },
 ]
 
 [package.metadata]
@@ -2423,7 +2423,7 @@ requires-dist = [
     { name = "boto3" },
     { name = "ipykernel", marker = "extra == 'dev'" },
     { name = "leafmap" },
-    { name = "matplotlib", marker = "extra == 'dev'" },
+    { name = "matplotlib" },
     { name = "python-dotenv" },
     { name = "rasterio" },
     { name = "rioxarray" },

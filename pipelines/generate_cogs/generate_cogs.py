@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import boto3
+import numpy as np
 import s3fs
 import xarray as xr
 from dotenv import load_dotenv
@@ -31,45 +32,92 @@ else:
 
 s3 = boto3.client("s3")
 
-print("Generating COGs for past steps.")
-for i in range(NUM_PAST_STEPS):
-    img = ndvi.isel(time=-(i + 1))
-    date = str(img["time"].values.astype("datetime64[D]"))
-    raster_name = f"ndvi_8d_processed_{date}.tif"
-    raster_path = Path(RASTER_LOCAL_DIR) / raster_name
-    img.rio.to_raster(raster_path=raster_path, driver="COG")
-    s3.upload_file(raster_path, BUCKET_NAME, f"{RASTER_PREFIX}/{raster_name}")
+### Trend plot
+ndvi_recent = ndvi.isel(time=slice(-4, -1))
+ndvi_last = ndvi_recent.isel(time=-1)
 
-print("Generating COGs for future steps.")
-for i in range(NUM_FUTURE_STEPS):
-    img = preds.isel(time=-(i + 1))
-    date = str(img["time"].values.astype("datetime64[D]"))
-    raster_name = f"ndvi_8d_forecast_{date}.tif"
-    raster_path = Path(RASTER_LOCAL_DIR) / raster_name
-    img.rio.to_raster(raster_path=raster_path, driver="COG")
-    s3.upload_file(raster_path, BUCKET_NAME, f"{RASTER_PREFIX}/{raster_name}")
+fit = ndvi_recent.polyfit(dim="time", deg=1)
+slope = fit.polyfit_coefficients.sel(degree=1)
+slope = (
+    slope * 1e9 * 60 * 60 * 24 * 8
+)  # convert from slope based on nanoseconds to 8 day intervals
 
-print("Generating COGs for percent change.")
-current_window = ndvi.isel(time=slice(-3, None)).mean(dim="time")
-previous_window = ndvi.isel(time=slice(-6, -3)).mean(dim="time")
+# Thresholds
+ndvi_thresh_sparse = 0.1
+ndvi_thresh_peak = 0.6
+slope_thresh = 0.01  # tolerance for "stable"
 
-pct_change = (current_window - previous_window) / previous_window * 100
+# Start with all zeros
+classes = xr.full_like(ndvi_last, fill_value=0, dtype=np.int8)
 
-low, high = pct_change.quantile([0.01, 0.99])
-pct_change_clipped = pct_change.clip(min=low, max=high)
+# Bare/sparse vegetation
+classes = classes.where(~(ndvi_last <= ndvi_thresh_sparse), 0)
 
-raster_name = "ndvi_pct_change_current.tif"
+# Stable (slope near zero, regardless of NDVI)
+stable_mask = np.abs(slope) < slope_thresh
+classes = classes.where(~stable_mask, 1)
+
+# Greening (NDVI > 0.1 and slope > 0)
+greening_mask = (ndvi_last > ndvi_thresh_sparse) & (slope > slope_thresh)
+classes = classes.where(~greening_mask, 2)
+
+# Browning/senescence (NDVI > 0.1 and slope < 0)
+browning_mask = (ndvi_last > ndvi_thresh_sparse) & (slope < -slope_thresh)
+classes = classes.where(~browning_mask, 3)
+
+# Peak growth (NDVI > 0.6 and slope near zero but preceded by positive slope)
+# Here we check if NDVI is high, slope near zero, and previous slope was positive
+ndvi_prev = ndvi.isel(time=slice(-6, -3))
+fit_prev = ndvi_prev.polyfit(dim="time", deg=1)
+slope_prev = fit_prev.polyfit_coefficients.sel(degree=1)
+slope_prev = slope_prev * 1e9 * 60 * 60 * 24 * 8
+peak_mask = (
+    (ndvi_last > ndvi_thresh_peak)
+    & (np.abs(slope) < slope_thresh)
+    & (slope_prev > slope_thresh)
+)
+classes = classes.where(~peak_mask, 4)
+
+raster_name = "ndvi_recent_trend.tif"
 raster_path = Path(RASTER_LOCAL_DIR) / raster_name
-pct_change_clipped.rio.to_raster(raster_path=raster_path, driver="COG")
+classes.rio.to_raster(raster_path=raster_path, driver="COG")
 s3.upload_file(raster_path, BUCKET_NAME, f"{RASTER_PREFIX}/{raster_name}")
 
-future_window = preds.isel(time=slice(-3, None))
+pred_recent = preds.isel(time=slice(-3, None))
+pred_last = pred_recent.isel(time=-1)
 
-pct_change = (future_window - current_window) / current_window * 100
-low, high = pct_change.quantile([0.01, 0.99])
-pct_change_clipped = pct_change.clip(min=low, max=high)
+fit_pred = pred_recent.polyfit(dim="time", deg=1)
+slope_pred = fit_pred.polyfit_coefficients.sel(degree=1)
+slope_pred = slope_pred * 1e9 * 60 * 60 * 24 * 8
 
-raster_name = "ndvi_pct_change_forecast.tif"
+# Start with all zeros
+classes = xr.full_like(pred_last, fill_value=0, dtype=np.int8)
+
+# Bare/sparse vegetation
+classes = classes.where(~(pred_last <= ndvi_thresh_sparse), 0)
+
+# Stable (slope near zero, regardless of NDVI)
+stable_mask = np.abs(slope_pred) < slope_thresh
+classes = classes.where(~stable_mask, 1)
+
+# Greening (NDVI > 0.1 and slope > 0)
+greening_mask = (pred_last > ndvi_thresh_sparse) & (slope_pred > slope_thresh)
+classes = classes.where(~greening_mask, 2)
+
+# Browning/senescence (NDVI > 0.1 and slope < 0)
+browning_mask = (pred_last > ndvi_thresh_sparse) & (slope_pred < -slope_thresh)
+classes = classes.where(~browning_mask, 3)
+
+# Peak growth (NDVI > 0.6 and slope near zero but preceded by positive slope)
+# Here we check if NDVI is high, slope near zero, and previous slope was positive
+peak_mask = (
+    (pred_last > ndvi_thresh_peak)
+    & (np.abs(slope_pred) < slope_thresh)
+    & (slope > slope_thresh)
+)
+classes = classes.where(~peak_mask, 4)
+
+raster_name = "ndvi_forecast_trend.tif"
 raster_path = Path(RASTER_LOCAL_DIR) / raster_name
-pct_change_clipped.rio.to_raster(raster_path=raster_path, driver="COG")
+classes.rio.to_raster(raster_path=raster_path, driver="COG")
 s3.upload_file(raster_path, BUCKET_NAME, f"{RASTER_PREFIX}/{raster_name}")
