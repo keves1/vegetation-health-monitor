@@ -5,6 +5,7 @@ requires-python = ">=3.11"
 
 dependencies = [
   "boto3",
+  "fiona",
   "leafmap",
   "matplotlib",
   "python-dotenv",
