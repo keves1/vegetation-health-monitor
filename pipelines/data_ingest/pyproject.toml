@@ -19,6 +19,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "bokeh",
+  "fiona",
   "folium",
   "ipykernel",
   "ipyleaflet",
