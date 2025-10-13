@@ -1,7 +1,21 @@
 name: Build and Push to ECR
 
 on:
+  on:
   workflow_dispatch:
+    inputs:
+      build-data-ingest:
+        description: "Build data-ingest?"
+        required: false
+        default: "false"
+      build-ml-inference:
+        description: "Build ml-inference?"
+        required: false
+        default: "false"
+      build-generate-cogs:
+        description: "Build generate-cogs?"
+        required: false
+        default: "false"
   push:
     branches:
       - main
@@ -36,7 +50,7 @@ jobs:
 
   build-data-ingest:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.data-ingest == 'true' }}
+    if: ${{ needs.detect-changes.outputs.data-ingest == 'true' || github.event.inputs.build-data-ingest == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -64,7 +78,7 @@ jobs:
 
   build-ml-inference:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.ml-inference == 'true' }}
+    if: ${{ needs.detect-changes.outputs.ml-inference == 'true' || github.event.inputs.build-ml-inference == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -92,7 +106,7 @@ jobs:
 
   build-generate-cogs:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.generate-cogs == 'true' }}
+    if: ${{ needs.detect-changes.outputs.generate-cogs == 'true' || github.event.inputs.build-generate-cogs == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
