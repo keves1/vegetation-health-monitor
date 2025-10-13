@@ -1,7 +1,6 @@
 name: Build and Push to ECR
 
 on:
-  on:
   workflow_dispatch:
     inputs:
       build-data-ingest:
