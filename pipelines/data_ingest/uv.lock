@@ -2816,7 +2816,7 @@ wheels = [
 ]
 
 [[package]]
-name = "vhm-pipelines"
+name = "vhm-data-ingest"
 version = "0.0.0"
 source = { editable = "." }
 dependencies = [
