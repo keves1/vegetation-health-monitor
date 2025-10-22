@@ -44,7 +44,7 @@ slope = (
 
 # Thresholds
 ndvi_thresh_sparse = 0.1
-ndvi_thresh_peak = 0.6
+ndvi_thresh_peak = 0.25
 slope_thresh = 0.01  # tolerance for "stable"
 
 # Start with all zeros
@@ -65,17 +65,12 @@ classes = classes.where(~greening_mask, 2)
 browning_mask = (ndvi_last > ndvi_thresh_sparse) & (slope < -slope_thresh)
 classes = classes.where(~browning_mask, 3)
 
-# Peak growth (NDVI > 0.6 and slope near zero but preceded by positive slope)
-# Here we check if NDVI is high, slope near zero, and previous slope was positive
+# Peak growth (NDVI > preak growth threshold)
 ndvi_prev = ndvi.isel(time=slice(-6, -3))
 fit_prev = ndvi_prev.polyfit(dim="time", deg=1)
 slope_prev = fit_prev.polyfit_coefficients.sel(degree=1)
 slope_prev = slope_prev * 1e9 * 60 * 60 * 24 * 8
-peak_mask = (
-    (ndvi_last > ndvi_thresh_peak)
-    & (np.abs(slope) < slope_thresh)
-    & (slope_prev > slope_thresh)
-)
+peak_mask = ndvi_last > ndvi_thresh_peak
 classes = classes.where(~peak_mask, 4)
 
 raster_name = "ndvi_recent_trend.tif"
@@ -108,13 +103,8 @@ classes = classes.where(~greening_mask, 2)
 browning_mask = (pred_last > ndvi_thresh_sparse) & (slope_pred < -slope_thresh)
 classes = classes.where(~browning_mask, 3)
 
-# Peak growth (NDVI > 0.6 and slope near zero but preceded by positive slope)
-# Here we check if NDVI is high, slope near zero, and previous slope was positive
-peak_mask = (
-    (pred_last > ndvi_thresh_peak)
-    & (np.abs(slope_pred) < slope_thresh)
-    & (slope > slope_thresh)
-)
+# Peak growth (NDVI > peak growth threshold)
+peak_mask = pred_last > ndvi_thresh_peak
 classes = classes.where(~peak_mask, 4)
 
 raster_name = "ndvi_forecast_trend.tif"
