@@ -48,26 +48,21 @@ class VegetationHealthMonitor:
             "2": "#45e640",
             "3": "#dc4133",
             "4": "#ffd700",
+            "5": "#ffffff",
         }
         m.add_cog_layer(
             url=recent_trend_url,
             colormap=custom_cmap,
             name="Recent Trend",
             fit_bounds=True,
+            titiler_endpoint="https://titiler.xyz",
         )
         m.add_cog_layer(
             url=forecast_trend_url,
             colormap=custom_cmap,
             name="Forecast Trend",
             fit_bounds=True,
-        )
-        m.add_vector(
-            filename="Burkina_Faso_ADM2_simplified.simplified.geojson",
-            zoom_to_layer=False,
-        )
-        m.add_vector(
-            filename="Mali_ADM2_simplified.simplified.geojson",
-            zoom_to_layer=False,
+            titiler_endpoint="https://titiler.xyz",
         )
         m.add_legend(
             title="Vegetation Growth Trend",
@@ -77,14 +72,9 @@ class VegetationHealthMonitor:
                 "Green-up",
                 "Senescence/Browning",
                 "Peak Growth",
+                "Insufficient Data",
             ],
-            colors=[
-                "#8b6f47",
-                "#a9a9a9",
-                "#45e640",
-                "#dc4133",
-                "#ffd700",
-            ],
+            colors=["#8b6f47", "#a9a9a9", "#45e640", "#dc4133", "#ffd700", "#ffffff"],
         )
         m.to_streamlit(height=600)
 
