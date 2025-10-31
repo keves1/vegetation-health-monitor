@@ -43,6 +43,13 @@ def forecast(chunk):
     )
 
 
+def index_slice_for_time(ds, start, end):
+    idx = ds.get_index("time")
+    i0 = idx.get_loc(start)
+    i1 = idx.get_loc(end)
+    return slice(i0, i1 + 1)
+
+
 def main():
     client = Client()
     print(client)
@@ -59,6 +66,7 @@ def main():
     pred_zarr_exists = False
     if fs.exists(f"{PRED_ZARR_PATH}/zarr.json"):
         pred_store = s3fs.S3Map(root=PRED_ZARR_PATH, s3=fs, check=False)
+        preds = xr.open_zarr(pred_store)
         pred_zarr_exists = True
     else:
         print(f"{PRED_ZARR_PATH} was not found, creating new store.")
@@ -107,13 +115,18 @@ def main():
     print(f"Predicted NDVI for {NUM_FUTURE_STEPS} steps ahead.")
 
     if pred_zarr_exists:
-        updated_preds = forecast_da.isel(time=slice(0, NUM_FUTURE_STEPS - 1))
-
+        overlap_dates = np.intersect1d(preds["time"].values, forecast_da["time"].values)
+        updated_preds = forecast_da.sel(time=overlap_dates)
+        updated_slice = index_slice_for_time(
+            preds, overlap_dates.min(), overlap_dates.max()
+        )
         updated_preds.drop_vars(["y", "x", "spatial_ref"]).to_zarr(
-            pred_store, mode="a", region={"time": slice(-(NUM_FUTURE_STEPS - 1), None)}
+            pred_store,
+            mode="a",
+            region={"time": updated_slice},
         )
         print(f"Dates updated: {updated_preds['time'].values}")
-        new_preds = forecast_da.isel(time=slice(-1, None))
+        new_preds = forecast_da.sel(time=~forecast_da["time"].isin(overlap_dates))
         new_preds.to_zarr(pred_store, mode="a", append_dim="time")
         print(f"Dates added: {new_preds['time'].values}")
     else:
