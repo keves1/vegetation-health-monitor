@@ -216,3 +216,4 @@ wandb-logs/
 *.pt
 temp/
 *.ckpt
+.streamlit/
