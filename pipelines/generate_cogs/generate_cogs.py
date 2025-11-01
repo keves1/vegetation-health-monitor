@@ -27,7 +27,7 @@ def calculate_slope(da):
 
 
 def percent_missing(da):
-    return da.isnull().sum(dim="time") / da.sizes["time"] * 100
+    return da.isnull().sum(dim="time") / da.sizes["time"]
 
 
 def classify_trend(last_timestep, slope, percent_missing):
@@ -35,7 +35,7 @@ def classify_trend(last_timestep, slope, percent_missing):
     ndvi_thresh_bare = 0.08  # based on typical NDVI for barren in this region
     ndvi_thresh_peak = 0.26  # 95th percentile NDVI cropland/grassland in this region
     slope_thresh = 0.001  # tolerance for "no change"
-    percent_missing_thresh = 0.5
+    percent_missing_thresh = 0.7
 
     # Start with all zeros. Represents bare/sparse vegetation
     classes = xr.full_like(last_timestep, fill_value=0, dtype=np.int8)
