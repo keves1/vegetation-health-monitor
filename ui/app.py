@@ -91,15 +91,15 @@ class VegetationHealthMonitor:
         m.to_streamlit(height=600)
 
         with st.sidebar:
-            st.title("About")
+            st.title("About the data")
             st.write(
                 """
                 This system is based on Landsat imagery and is updated every 8 days. 
                 The map shows two NDVI trends: recent and forecasted. You can toggle the layers using the
                 layer control in the top right corner of the map to see both of these trends. Recent Trend is
                 based on data from the past 24 days and Forecast Trend uses 3 forecasted timesteps at 8 day intervals (24 days ahead).
-                Thresholds based on historical data are also used in classifying each pixel. Forecasts are currently made using only
-                past NDVI values.
+                Thresholds based on historical data are also used in classifying each pixel. Forecasts are made using
+                past NDVI values. Note that some areas shown as bare/sparse vegatation are actually water bodies.
                 """
             )
 
