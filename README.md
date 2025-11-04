@@ -19,6 +19,13 @@ This system contains the following components, each a separate containerized app
 
 The recent and predicted NDVI trends are shown on a map in a Streamlit web application.
 
+### Key Aspects of the System:
+- Cloud-native geospatial data pipelines: Uses file formats and standards that allow for efficient access to specific portions of large geospatial datasets, such as COG, Zarr, and STAC. Data in the Zarr stores is chunked to match the access pattern.
+- Containerization: Each stage in the processing pipeline is a separate containerized application run as an ECS task and orchestrated using AWS Step Functions. This creates modularity and allows resources to be tailored to the needs of each stage.
+- Scalability: Dask is used to allow for parallel processing of large volumes of spatio-temporal data.
+- CI/CD: GitHub Actions is used to build and push the corresponding container image anytime a stage is updated.
+
+
 #### To Do:
 
 There are a number of things that could be done to keep building out and enhancing each component of the project. Some of these are:
