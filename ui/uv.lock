@@ -1054,7 +1054,7 @@ wheels = [
 
 [[package]]
 name = "leafmap"
-version = "0.57.9"
+version = "0.60.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anywidget" },
@@ -1080,9 +1080,9 @@ dependencies = [
     { name = "whiteboxgui" },
     { name = "xyzservices" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f5/a2/d9aad7b8cdcd52e8b73b7ee75c935a60a1383c997040b8da5d48e24575f9/leafmap-0.57.9.tar.gz", hash = "sha256:34d8fac0aea4d6d12ee71c8f583254bd4fd70c4fef979c9b2aba856725470db7", size = 8135402, upload-time = "2025-11-16T17:35:46.565Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/04/9b/88731894d139f8b2b8dd155ccbbd5adf11f43b2db2d7ff0d7bebba26bd3d/leafmap-0.60.1.tar.gz", hash = "sha256:61d7fd8cf7ca0a38d7bf00345a9db202894dee23febca2d9c0d0430d1ebe3669", size = 3493712, upload-time = "2026-02-19T18:47:08.36Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/e8/49684a5c4140f22cde67c46b1f81a9cac71cdf72a0b5e5d316c8534c3970/leafmap-0.57.9-py2.py3-none-any.whl", hash = "sha256:3687262358c73e9a2d16bd777058eb4069cbb977b71c4cbc4cb160ec3c40f4e9", size = 632881, upload-time = "2025-11-16T17:35:44.663Z" },
+    { url = "https://files.pythonhosted.org/packages/97/9c/ba4520162e1733f79d5d90d496b9414c836836a0d729ac908a28e7610538/leafmap-0.60.1-py2.py3-none-any.whl", hash = "sha256:4eca463b96fad8c8fcfda906bfd6174fc3acb8a6cd08d4d7f68aa22b61dc25f5", size = 667930, upload-time = "2026-02-19T18:47:06.445Z" },
 ]
 
 [[package]]

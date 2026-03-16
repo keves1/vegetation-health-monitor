@@ -62,19 +62,18 @@ class VegetationHealthMonitor:
             "4": "#ffd700",
             "5": "#ffffff",
         }
+        titiler_endpoint = "https://giswqs-titiler-endpoint.hf.space"
         m.add_cog_layer(
             url=recent_trend_url,
             colormap=custom_cmap,
             name="Recent Trend",
-            fit_bounds=True,
-            titiler_endpoint="https://titiler.xyz",
+            titiler_endpoint=titiler_endpoint,
         )
         m.add_cog_layer(
             url=forecast_trend_url,
             colormap=custom_cmap,
             name="Forecast Trend",
-            fit_bounds=True,
-            titiler_endpoint="https://titiler.xyz",
+            titiler_endpoint=titiler_endpoint,
         )
         m.add_legend(
             title="Vegetation Growth Trend",
