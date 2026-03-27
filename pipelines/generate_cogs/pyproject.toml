@@ -16,6 +16,7 @@ dependencies = [
 dev = [
   "ipykernel",
   "matplotlib",
+  "pytest",
 ]
 
 [build-system]

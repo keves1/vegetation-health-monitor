@@ -20,6 +20,7 @@ dev = [
   "ipykernel",
   "matplotlib",
   "bokeh",
+  "pytest",
 ]
 
 [build-system]

@@ -25,6 +25,7 @@ dev = [
   "ipyleaflet",
   "leafmap",
   "matplotlib",
+  "pytest",
 ]
 
 [build-system]
