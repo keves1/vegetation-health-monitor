@@ -50,6 +50,26 @@ def index_slice_for_time(ds, start, end):
     return slice(i0, i1 + 1)
 
 
+def update_zarr_store(store, data):
+    ds = xr.open_zarr(store)
+    overlap_dates = np.intersect1d(ds["time"].values, data["time"].values)
+    if overlap_dates.size > 0:
+        updated = data.sel(time=overlap_dates)
+        updated_slice = index_slice_for_time(
+            ds, overlap_dates.min(), overlap_dates.max()
+        )
+        updated.drop_vars(["y", "x", "spatial_ref"], errors="ignore").to_zarr(
+            store,
+            mode="a",
+            region={"time": updated_slice},
+        )
+        print(f"Dates updated: {updated['time'].values}")
+
+    new = data.sel(time=~data["time"].isin(overlap_dates))
+    new.to_zarr(store, mode="a", append_dim="time")
+    print(f"Dates added: {new['time'].values}")
+
+
 def main():
     client = Client()
     print(client)
@@ -66,7 +86,6 @@ def main():
     pred_zarr_exists = False
     if fs.exists(f"{PRED_ZARR_PATH}/zarr.json"):
         pred_store = s3fs.S3Map(root=PRED_ZARR_PATH, s3=fs, check=False)
-        preds = xr.open_zarr(pred_store)
         pred_zarr_exists = True
     else:
         print(f"{PRED_ZARR_PATH} was not found, creating new store.")
@@ -115,20 +134,7 @@ def main():
     print(f"Predicted NDVI for {NUM_FUTURE_STEPS} steps ahead.")
 
     if pred_zarr_exists:
-        overlap_dates = np.intersect1d(preds["time"].values, forecast_da["time"].values)
-        updated_preds = forecast_da.sel(time=overlap_dates)
-        updated_slice = index_slice_for_time(
-            preds, overlap_dates.min(), overlap_dates.max()
-        )
-        updated_preds.drop_vars(["y", "x", "spatial_ref"]).to_zarr(
-            pred_store,
-            mode="a",
-            region={"time": updated_slice},
-        )
-        print(f"Dates updated: {updated_preds['time'].values}")
-        new_preds = forecast_da.sel(time=~forecast_da["time"].isin(overlap_dates))
-        new_preds.to_zarr(pred_store, mode="a", append_dim="time")
-        print(f"Dates added: {new_preds['time'].values}")
+        update_zarr_store(pred_store, forecast_da)
     else:
         forecast_da.to_zarr(pred_store, mode="w", consolidated=True)
         print(f"Dates added: {forecast_da['time'].values}")
