@@ -62,7 +62,7 @@ class VegetationHealthMonitor:
             "4": "#ffd700",
             "5": "#ffffff",
         }
-        titiler_endpoint = "https://giswqs-titiler-endpoint.hf.space"
+        titiler_endpoint = "https://titiler.opengeos.org"
         m.add_cog_layer(
             url=recent_trend_url,
             colormap=custom_cmap,
