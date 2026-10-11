@@ -4,12 +4,20 @@ version = "0.0.0"
 requires-python = ">=3.11"
 
 dependencies = [
+  "bokeh",
+  "bottleneck",
+  "dask",
+  "distributed",
   "ipykernel",
   "matplotlib",
   "numpy",
+  "odc-stac",
+  "planetary-computer",
+  "pystac-client",
   "torchgeo @ git+https://github.com/keves1/torchgeo.git@d9353ad97b77a7724887bc73c18f9699a4106799",
   "wandb",
   "xarray",
+  "xbatcher",
   "zarr",
 ]
 
